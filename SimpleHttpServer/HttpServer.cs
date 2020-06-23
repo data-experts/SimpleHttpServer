@@ -39,6 +39,11 @@ namespace SimpleHttpServer
             }
         }
 
+        public void StopListen()
+        {
+            IsActive = false;
+        }
+
         public void Listen()
         {
             this.Listener = new TcpListener(IPAddress.Any, this.Port);
