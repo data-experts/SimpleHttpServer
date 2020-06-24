@@ -122,7 +122,7 @@ namespace SimpleHttpServer
         protected virtual HttpResponse RouteRequest(Stream inputStream, Stream outputStream, HttpRequest request)
         {
 
-            var routes = _routes.Where(x => Regex.Match(request.Url, x.UrlRegex).Success).ToList();
+            var routes = _routes.Where(x => Regex.Match(request.Url, x.UrlRegex, RegexOptions.IgnoreCase).Success).ToList();
 
             if (!routes.Any())
             {
