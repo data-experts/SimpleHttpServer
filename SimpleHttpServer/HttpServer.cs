@@ -42,7 +42,11 @@ namespace SimpleHttpServer
             }
         }
 
-        public void StopListen() => _isActive = false;
+        public void StopListen()
+        {
+            _isActive = false;
+            _listener.Stop();
+        }
 
         public void Listen()
         {
