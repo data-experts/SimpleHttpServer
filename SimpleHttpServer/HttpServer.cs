@@ -18,43 +18,37 @@ namespace SimpleHttpServer
     {
         #region Fields
 
-        private int Port;
-        private TcpListener Listener;
-        private HttpProcessor Processor;
-        private bool IsActive = true;
+        private readonly int _port;
+        private TcpListener _listener;
+        private readonly HttpProcessor _processor;
+        private bool _isActive = true;
 
         #endregion
 
-        private static readonly ILog log = LogManager.GetLogger(typeof(HttpServer));
+        private static readonly ILog _log = LogManager.GetLogger(typeof(HttpServer));
 
         #region Public Methods
         public HttpServer(int port, List<Route> routes)
         {
-            this.Port = port;
-            this.Processor = new HttpProcessor();
+            _port = port;
+            _processor = new HttpProcessor();
 
             foreach (var route in routes)
             {
-                this.Processor.AddRoute(route);
+                _processor.AddRoute(route);
             }
         }
 
-        public void StopListen()
-        {
-            IsActive = false;
-        }
+        public void StopListen() => _isActive = false;
 
         public void Listen()
         {
-            this.Listener = new TcpListener(IPAddress.Any, this.Port);
-            this.Listener.Start();
-            while (this.IsActive)
+            _listener = new TcpListener(IPAddress.Any, _port);
+            _listener.Start();
+            while (_isActive)
             {
-                TcpClient s = this.Listener.AcceptTcpClient();
-                Thread thread = new Thread(() =>
-                {
-                    this.Processor.HandleClient(s);
-                });
+                var s = _listener.AcceptTcpClient();
+                var thread = new Thread(() => _processor.HandleClient(s));
                 thread.Start();
                 Thread.Sleep(1);
             }
