@@ -24,6 +24,8 @@ namespace SimpleHttpServer
 
         private static readonly ILog _log = LogManager.GetLogger(typeof(HttpProcessor));
 
+        public Func<HttpRequest, HttpResponse> NotFoundOverrideCallable = null;
+
         #endregion
 
         #region Constructors
@@ -123,8 +125,9 @@ namespace SimpleHttpServer
             var routes = _routes.Where(x => Regex.Match(request.Url, x.UrlRegex).Success).ToList();
 
             if (!routes.Any())
-                return HttpBuilder.NotFound();
-
+            {
+                return NotFoundOverrideCallable == null ? HttpBuilder.NotFound() : NotFoundOverrideCallable(request);
+            }
             var route = routes.SingleOrDefault(x => x.Method == request.Method);
 
             if (route == null)
@@ -132,7 +135,6 @@ namespace SimpleHttpServer
                 {
                     ReasonPhrase = "Method Not Allowed",
                     StatusCode = "405",
-
                 };
 
             // extract the path if there is one

@@ -28,10 +28,13 @@ namespace SimpleHttpServer
         private static readonly ILog _log = LogManager.GetLogger(typeof(HttpServer));
 
         #region Public Methods
-        public HttpServer(int port, List<Route> routes)
+        public HttpServer(int port, List<Route> routes, Func<HttpRequest,HttpResponse> notFoundOverrideCallable = null)
         {
             _port = port;
-            _processor = new HttpProcessor();
+            _processor = new HttpProcessor
+            {
+                NotFoundOverrideCallable = notFoundOverrideCallable
+            };
 
             foreach (var route in routes)
             {
